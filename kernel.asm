@@ -1,20 +1,16 @@
 [org 0x0000]
 
-; --- МАГІЯ НАЛАШТУВАННЯ ПАМ'ЯТІ ---
-mov ax, cs          ; Беремо адресу, де ми зараз
-mov ds, ax          ; Налаштовуємо Data Segment
-mov es, ax          ; Налаштовуємо Extra Segment
-; ---------------------------------
+mov ax, cs          
+mov ds, ax          
+mov es, ax          
 
-; 1. Текстовий режим для логіну (80x25)
+
 mov ax, 0x0003
 int 0x10
 
-; ТЕПЕР ВІН ЙОГО ЗНАЙДЕ!
 mov si, msg_login
 call print_string
 
-; ... далі твій код get_char і все інше ...
 
 get_char:
     mov ah, 0x00
@@ -47,7 +43,6 @@ start_paint:
     mov byte [pen_down], 1
 
 main_loop:
-    ; --- МАЛЮВАННЯ (якщо перо опущені) ---
     cmp byte [pen_down], 1
     jne draw_cursor_only
     
@@ -75,11 +70,10 @@ main_loop:
     jmp wait_input
 
 draw_cursor_only:
-    ; --- МАЛЮЄМО ТІЛЬКИ ПОКАЗНИК (чорна точка) ---
     push dx
     imul di, dx, 320
     add di, bx
-    mov al, 0          ; Чорний колір для курсора
+    mov al, 0          
     mov [es:di], al
     pop dx
 
@@ -87,7 +81,6 @@ wait_input:
     mov ah, 0x00
     int 0x16
 
-    ; Управління
     cmp al, 'w'
     je move_up
     cmp al, 's'
@@ -99,7 +92,7 @@ wait_input:
     cmp al, ' '
     je toggle_pen
     
-    ; Кольори
+
     cmp al, '1'
     je set_blue
     cmp al, '2'
@@ -111,7 +104,6 @@ wait_input:
     
     jmp main_loop
 
-; --- Функції ---
 print_string:
     lodsb
     or al, al
@@ -152,7 +144,6 @@ set_eraser:
     mov byte [color], 15
     jmp main_loop
 
-; --- ДАНІ ---
 msg_login db 'MikhailOS v1.3 Cursor Mode. Password: ', 0
 color db 1
 pen_down db 
